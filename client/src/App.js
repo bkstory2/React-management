@@ -2,7 +2,7 @@ import './App.css';
 import { Component } from 'react';
 import Customer from './components/Customer';
 import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper } from '@mui/material';
-import { withStyles } from '@mui/styles'; // ✅ 올바른 import
+import { withStyles } from '@mui/styles'; 
 
 const styles = (theme) => ({
   root: {
@@ -14,36 +14,31 @@ const styles = (theme) => ({
   },
 });
 
-const customers = [
-  {
-    id: 1,
-    image: 'https://picsum.photos/101/100',
-    name: '황병규',
-    birthday: '730222',
-    gender: '남',
-    job: '개발자222',
-  },
-  {
-    id: 2,
-    image: 'https://picsum.photos/102/100',
-    name: '이이이이',
-    birthday: '880222',
-    gender: '남',
-    job: '개발자22',
-  },
-  {
-    id: 3,
-    image: 'https://picsum.photos/103/100',
-    name: '김미김김',
-    birthday: '990222',
-    gender: '남',
-    job: '개발자3',
-  },
-];
 
 class App extends Component {
+
+  state = {
+    customers: [],
+  }
+
+  componentDidMount() {
+    this.callApi()
+      .then(res => this.setState({ customers: res }))
+      .catch(err => {
+          console.error("API 호출 실패:", err);
+          // 에러 상태를 추가해서 UI에 표시할 수 있음
+          this.setState({ customers: [] }); // 예시로 빈 배열을 반환
+      });
+  }
+
+  callApi = async() => {
+    const response = await fetch('/api/customers');
+    const body = await response.json(); 
+    return body;
+  }
+
   render() {
-    const { classes } = this.props; // ✅ this.props에서 classes 추출
+    const { classes } = this.props;
     return (
       <TableContainer component={Paper} className={classes.root}>
         <Table className={classes.table}>
@@ -58,22 +53,30 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map((c) => (
-              <Customer
-                key={c.id}
-                id={c.id}
-                image={c.image}
-                name={c.name}
-                birthday={c.birthday}
-                gender={c.gender}
-                job={c.job}
-              />
-            ))}
+            {this.state.customers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6}>고객 데이터가 없습니다.</TableCell>
+              </TableRow>
+            ) : (
+              this.state.customers.map((c) => (
+                <Customer
+                  key={c.id}
+                  id={c.id}
+                  image={c.image}
+                  name={c.name}
+                  birthday={c.birthday}
+                  gender={c.gender}
+                  job={c.job}
+                />
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
     );
   }
+
+  
 }
 
 export default withStyles(styles)(App);
