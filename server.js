@@ -18,34 +18,38 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/customers', (req, res) => {
-  console.log('Call client  ====> call');
-  res.json([
-    {
-      id: 1,
-      image: 'https://picsum.photos/101/100',
-      name: '서버 황병규',
-      birthday: '730222',
-      gender: '남',
-      job: '개발자222',
-    },
-    {
-      id: 2,
-      image: 'https://picsum.photos/102/100',
-      name: '서버 이이이이',
-      birthday: '880222',
-      gender: '남',
-      job: '개발자22',
-    },
-    {
-      id: 3,
-      image: 'https://picsum.photos/103/100',
-      name: '서버 김미김김',
-      birthday: '990222',
-      gender: '남',
-      job: '개발자3',
-    },
-  ]);
-});
+    console.log('Call client  ====> call');
+  
+    // 5초(5000ms) 지연 후 응답 전송
+    setTimeout(() => {
+      res.json([
+        {
+          id: 1,
+          image: 'https://picsum.photos/101/100',
+          name: '서버 황병규',
+          birthday: '730222',
+          gender: '남',
+          job: '개발자222',
+        },
+        {
+          id: 2,
+          image: 'https://picsum.photos/102/100',
+          name: '서버 이이이이',
+          birthday: '880222',
+          gender: '남',
+          job: '개발자22',
+        },
+        {
+          id: 3,
+          image: 'https://picsum.photos/103/100',
+          name: '서버 김미김김',
+          birthday: '990222',
+          gender: '남',
+          job: '개발자3',
+        },
+      ]);
+    }, 10); // 5000ms = 5초
+  });
 
 app.listen(port, () => {
   console.log(`서버 동작 중 : ${port}`);

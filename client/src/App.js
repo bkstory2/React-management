@@ -3,6 +3,7 @@ import { Component } from 'react';
 import Customer from './components/Customer';
 import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper } from '@mui/material';
 import { withStyles } from '@mui/styles'; 
+import CircularProgress from '@mui/material/CircularProgress';
 
 const styles = (theme) => ({
   root: {
@@ -11,17 +12,32 @@ const styles = (theme) => ({
   },
   table: {
     minWidth: 1080,
-  },
+  }
+
 });
+
+  /*
+    1  constructor
+    2  componentWillMount
+    3  render
+    4. componentDidMount
+    5. props or state => shouldcomponentUpdate() 
+
+  */
+
 
 
 class App extends Component {
 
   state = {
     customers: [],
+    completed :  0 
   }
 
   componentDidMount() {
+    
+    this.timer = setInterval(this.progress , 20 ) ; 
+
     this.callApi()
       .then(res => this.setState({ customers: res }))
       .catch(err => {
@@ -30,11 +46,16 @@ class App extends Component {
           this.setState({ customers: [] }); // 예시로 빈 배열을 반환
       });
   }
-
+  
   callApi = async() => {
     const response = await fetch('/api/customers');
     const body = await response.json(); 
     return body;
+  }
+
+  progress = () => {
+    const { completed} = this.state ; 
+    this.setState({completed: completed >=100 ? 0 : completed + 1 })
   }
 
   render() {
@@ -55,7 +76,10 @@ class App extends Component {
           <TableBody>
             {this.state.customers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6}>고객 데이터가 없습니다.</TableCell>
+                <TableCell colSpan={6} align='center'>
+                    <CircularProgress  variant="determinate" value={this.state.completed}   />
+
+                </TableCell>
               </TableRow>
             ) : (
               this.state.customers.map((c) => (
@@ -76,7 +100,7 @@ class App extends Component {
     );
   }
 
-  
+
 }
 
 export default withStyles(styles)(App);
